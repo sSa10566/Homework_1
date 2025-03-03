@@ -1,0 +1,44 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+file_path = "country_wise_latest.csv"
+df = pd.read_csv(file_path)
+
+df = df.sort_values(by="Confirmed", ascending=False)
+
+
+plt.figure(figsize=(12, 6))
+top_countries = df.head(10)
+plt.bar(top_countries["Country/Region"], top_countries["Confirmed"], color='coral')
+plt.xlabel("Country")
+plt.ylabel("Total Confirmed Cases")
+plt.title("Top 10 Countries with the Highest COVID-19 Confirmed Cases")
+plt.xticks(rotation=45)
+plt.show()
+
+plt.figure(figsize=(8, 6))
+sns.scatterplot(data=df, x="Confirmed", y="Deaths", alpha=0.7)
+plt.xlabel("Confirmed Cases")
+plt.ylabel("Deaths")
+plt.title("Confirmed Cases vs Deaths (Log Scale)")
+plt.xscale('log')
+plt.yscale('log')
+plt.grid()
+plt.show()
+
+plt.figure(figsize=(8, 8))
+df_region = df.groupby("WHO Region")["Confirmed"].sum()
+plt.pie(df_region, labels=df_region.index, autopct="%1.1f%%", startangle=140, colors=sns.color_palette("pastel"))
+plt.title("COVID-19 Cases Distribution by WHO Region")
+plt.show()
+
+
+plt.figure(figsize=(12, 6))
+df["Mortality Rate"] = df["Deaths"] / df["Confirmed"] * 100  # Calculate mortality rate
+top_mortality = df.nlargest(10, "Mortality Rate")  # Select top 10 countries with highest mortality rate
+sns.heatmap(top_mortality[["Mortality Rate"]], annot=True, cmap="Reds", linewidths=0.5)
+plt.xlabel("Mortality Rate (%)")
+plt.ylabel("Country")
+plt.title("Top 10 Countries with the Highest COVID-19 Mortality Rate")
+plt.show()
